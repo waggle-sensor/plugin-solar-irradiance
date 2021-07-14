@@ -1,4 +1,4 @@
-name: "solarcloud"
+name: "solarirradiance-unet"
 description: "Solar Irradiance Estimator Using U-Net"
 version : "0.1.0"
 namespace: "sage"
