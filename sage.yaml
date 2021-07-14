@@ -17,5 +17,5 @@ resources:
 inputs:
   - id: "result"
     type: "str"
-  - id: "timeinterval"
+  - id: "interval"
     type: "int"
