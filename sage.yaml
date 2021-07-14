@@ -15,7 +15,7 @@ resources:
     view: "sky"
     min_resolution: "600x800"
 inputs:
-  - id: "result"
-    type: "str"
   - id: "interval"
+    type: "int"
+  - id: "sampling-interval"
     type: "int"
