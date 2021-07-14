@@ -1,0 +1,21 @@
+name: "solarcloud"
+description: "Solar Irradiance Estimator Using U-Net"
+version : "0.1.0"
+namespace: "sage"
+source:
+  architectures :
+    - "linux/amd64"
+  url: "https://github.com/waggle-sensor/plugin-solarirradiance-unet.git"
+  build_args:
+    SAGE_STORE_URL: "PATH_TO_OBJECT_STORE"
+    SAGE_USER_TOKEN: "USER_TOKEN"
+    BUCKET_ID_MODEL: "BUCKET_ID_TO_MODELS"
+resources:
+  - type: "RGB_image_producer"
+    view: "sky"
+    min_resolution: "600x800"
+inputs:
+  - id: "result"
+    type: "str"
+  - id: "timeinterval"
+    type: "int"
