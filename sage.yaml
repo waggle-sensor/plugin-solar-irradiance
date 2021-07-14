@@ -1,4 +1,4 @@
-name: "solarirradiance-unet"
+name: "irradiance-unet"
 description: "Solar Irradiance Estimator Using U-Net"
 version : "0.1.0"
 namespace: "sage"
