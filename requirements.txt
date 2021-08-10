@@ -1,2 +1,2 @@
 git+https://github.com/sagecontinuum/sage-cli.git
-git+https://github.com/waggle-sensor/pywaggle
+https://github.com/waggle-sensor/pywaggle/archive/0.43.2.zip
