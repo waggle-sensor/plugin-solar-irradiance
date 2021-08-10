@@ -8,5 +8,7 @@ source:
   url: "https://github.com/waggle-sensor/plugin-solarirradiance-unet.git"
   branch: "main"
 inputs:
-  - id: "interval"
-    type: "int"
+  - id: "node-latitude"
+    type: "float"
+  - id: "node-longitude"
+    type: "float"
