@@ -1,6 +1,7 @@
 FROM waggle/plugin-base:1.1.1-ml-cuda10.2-l4t
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config \
     libhdf5-dev \
     && rm -rf /var/lib/apt/lists/*
 
