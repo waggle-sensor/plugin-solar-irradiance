@@ -6,8 +6,7 @@ source:
   architectures :
     - "linux/arm64"
   url: "https://github.com/waggle-sensor/plugin-solarirradiance-unet.git"
-  build_args:
-    SAGE_STORE_URL: "https://osn.sagecontinuum.org"
+  branch: "main"
 inputs:
   - id: "interval"
     type: "int"
