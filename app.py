@@ -77,11 +77,11 @@ if __name__ == '__main__':
         action='store_true', default=False,
         help='Debug flag')
     parser.add_argument(
-        '-node-latitude', dest='latitude', type=float,
+        '-node-latitude', dest='node_latitude', type=float,
         default=36.691959,
         help='latitude of the node location')
     parser.add_argument(
-        '-node-longitude', dest='longitude', type=float,
+        '-node-longitude', dest='node_longitude', type=float,
         default=-97.565965,
         help='longitude of the node location')
     run(parser.parse_args())
