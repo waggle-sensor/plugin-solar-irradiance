@@ -4,4 +4,5 @@ Renewable solar photovoltaic energy generation has been widely utilized to suppo
 ## Algorithm Description
 As a method to estimate solar irradiance, we utilized cloud cover estimation using a machine learning model called U-Net [1]. The application estimates solar irradiance from a calculated cloud cover ratio and outputs the percentage of solar irradiance in Watt per square meter.
 
+### Reference
 [1] Seongha Park, Yongho Kim, Nicola J. Ferrier, Scott M. Collis, Rajesh Sankaran and Pete H. Beckman “Prediction of Solar Irradiance and Photovoltaic Solar Energy Product Based on Cloud Coverage Estimation Using Machine Learning Methods”, 2020, Atmosphere, Volume 12, Issue 3, pages 395.
