@@ -1,7 +1,10 @@
 name: "solarirradiance-unet"
 description: "Solar Irradiance Estimator Using U-Net"
 version : "0.0.0"
-namespace: "sage"
+authors: "Seongha Park <seongha.park@anl.gov>"
+license: "license"
+keywords: "solar irradiance, cloud cover based, pvlib"
+homepage: "https://github.com/waggle-sensor/plugin-solarirradiance-unet"
 source:
   architectures :
     - "linux/arm64"

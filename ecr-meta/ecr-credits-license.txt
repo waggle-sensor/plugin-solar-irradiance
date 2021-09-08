@@ -1,2 +1,0 @@
-authors: Seongha Park <seongha.park@anl.gov>
-license: MIT license
