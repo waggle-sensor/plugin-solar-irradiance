@@ -1,1 +1,0 @@
-https://github.com/waggle-sensor/plugin-solarirradiance-unet
