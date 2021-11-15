@@ -54,20 +54,33 @@ class cal_max_irr:
 def run(args):
     print('Generating solar irradiance table...')
     # The default location (36.691959, -97.565965) is Lamont, Oklahoma
+    timestamp = time.time()
+    plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Generating Max Solar Irradiance Table', timestamp=timestamp)
+    print(f"Generating Max Solar irradiance at {timestamp}")
     maxirr = cal_max_irr(geo_location=(args.node_latitude, args.node_longitude))
     maxirr.solarpy(datetime.datetime.fromtimestamp(time.time()).date())
 
     print('Solar Irradiance estimator starts...')
     while True:
         print('Getting cloud coverage ratio...')
+        timestamp = time.time()
+        plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Getting Cloud Cover Ratio', timestamp=timestamp)
+        print(f"Getting Cloud Cover ratio at {timestamp}")
         ratio = plugin.get()
         rvalue = ratio.value
-        timestamp = ratio.timestamp
-        current_max_irr = maxirr.cal(timestamp)
+        imagetimestamp = ratio.timestamp
+        timestamp = time.time()
+        plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Getting Current Max Irradiance', timestamp=timestamp)
+        print(f"Getting Current Max Irradiance at {timestamp}")
+        current_max_irr = maxirr.cal(imagetimestamp)
 
+        timestamp = time.time()
+        plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Calculate Irradiance', timestamp=timestamp)
+        print(f"Calculate Solar irradiance at {timestamp}")
         irr = (1-rvalue) * current_max_irr
-        plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=timestamp)
+        plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=imagetimestamp)
         print(f"Measures published: Solar irradiance = {irr}")
+        exit(0)
 
 
 if __name__ == '__main__':
