@@ -6,8 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
-RUN pip3 install --no-cache-dir --upgrade pip \
-  && pip3 install --no-cache-dir -r /app/requirements.txt
+#RUN pip3 install --no-cache-dir --upgrade pip \
+#  && pip3 install --no-cache-dir -r /app/requirements.txt
+RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
 COPY app.py /app/
 WORKDIR /app
