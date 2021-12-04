@@ -1,3 +1,4 @@
-tables
-pvlib
+#tables
+#pvlib
+pysolar
 https://github.com/waggle-sensor/pywaggle/archive/0.43.2.zip
