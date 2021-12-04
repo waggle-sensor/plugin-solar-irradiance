@@ -4,9 +4,11 @@ import datetime
 
 import time
 
-from pvlib import location
-from pvlib import irradiance
-import pandas as pd
+#from pvlib import location
+#from pvlib import irradiance
+#import pandas as pd
+
+from pysolar.solar import *
 
 import waggle.plugin as plugin
 
@@ -52,13 +54,20 @@ class cal_max_irr:
 
 
 def run(args):
-    print('Generating solar irradiance table...')
+    #print('Generating solar irradiance table...')
     # The default location (36.691959, -97.565965) is Lamont, Oklahoma
-    timestamp = time.time()
-    plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Generating Max Solar Irradiance Table', timestamp=timestamp)
-    print(f"Generating Max Solar irradiance at {timestamp}")
-    maxirr = cal_max_irr(geo_location=(args.node_latitude, args.node_longitude))
-    maxirr.solarpy(datetime.datetime.fromtimestamp(time.time()).date())
+    #timestamp = time.time()
+    #plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Generating Max Solar Irradiance Table', timestamp=timestamp)
+    #print(f"Generating Max Solar irradiance at {timestamp}")
+    #maxirr = cal_max_irr(geo_location=(args.node_latitude, args.node_longitude))
+    #maxirr.solarpy(datetime.datetime.fromtimestamp(time.time()).date())
+
+
+    latitude_deg = args.node_latitude # positive in the northern hemisphere
+    longitude_deg = args.node_longitude # negative reckoning west from prime meridian in Greenwich, England
+    date = datetime.datetime(2007, 2, 18, 15, 13, 1, 130320, tzinfo=datetime.timezone.utc)
+    altitude_deg = get_altitude(latitude_deg, longitude_deg, date)
+    irr = radiation.get_radiation_direct(date, altitude_deg)
 
     print('Solar Irradiance estimator starts...')
     while True:
@@ -72,7 +81,11 @@ def run(args):
         timestamp = time.time()
         plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Getting Current Max Irradiance', timestamp=timestamp)
         print(f"Getting Current Max Irradiance at {timestamp}")
-        current_max_irr = maxirr.cal(imagetimestamp)
+        #current_max_irr = maxirr.cal(imagetimestamp)
+
+
+        date = datetime.datetime.fromtimestamp(imagetimestamp).replace(year=2018).replace(tzinfo=datetime.timezone.utc)
+        current_max_irr = radiation.get_radiation_direct(date, altitude_deg)
 
         timestamp = time.time()
         plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Calculate Irradiance', timestamp=timestamp)
