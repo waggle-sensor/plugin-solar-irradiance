@@ -91,8 +91,9 @@ def run(args):
         plugin.publish(TOPIC_SOLARCLOUD, 'Solar Irradiance Estimator: Calculate Irradiance', timestamp=timestamp)
         print(f"Calculate Solar irradiance at {timestamp}")
         irr = (1-rvalue) * current_max_irr
+        timestamp = time.time()
         plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=imagetimestamp)
-        print(f"Measures published: Solar irradiance = {irr}")
+        print(f"Measures published: Solar irradiance = {irr} at {timestamp}")
         exit(0)
 
 
