@@ -9,7 +9,7 @@ source:
   architectures :
     - "linux/arm64"
   url: "https://github.com/waggle-sensor/plugin-solar-irradiance.git"
-  branch: "main"
+  branch: "oneshot"
 inputs:
   - id: "node-latitude"
     type: "float"
