@@ -10,7 +10,7 @@ collaborators: "Bhupendra Raut, Dario Dematties Reyes, Joseph Swantek, Neal Conr
 source:
   architectures :
     - "linux/arm64"
-  url: "https://github.com/waggle-sensor/plugin-solar-irradiance"
+  url: "https://github.com/waggle-sensor/plugin-solar-irradiance.git"
   branch: "main"
 inputs:
   - id: "node-latitude"
