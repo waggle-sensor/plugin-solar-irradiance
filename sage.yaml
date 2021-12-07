@@ -1,16 +1,16 @@
-name: "solarirradiance-unet"
+name: "solar-irradiance"
 description: "Solar Irradiance Estimator Using U-Net"
 version : "0.0.0"
 authors: "Seongha Park <seongha.park@anl.gov>"
 license: "MIT license"
 keywords: "solar irradiance, cloud cover based, pvlib"
-homepage: "https://github.com/waggle-sensor/plugin-solarirradiance-unet"
+homepage: "https://github.com/waggle-sensor/plugin-solar-irradiance"
 funding: "NSF 1935984"
 collaborators: "Bhupendra Raut, Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Sergey Shemyakin, Wolfgang Gerlach, Yongho kim"
 source:
   architectures :
     - "linux/arm64"
-  url: "https://github.com/waggle-sensor/plugin-solarirradiance-unet.git"
+  url: "https://github.com/waggle-sensor/plugin-solar-irradiance"
   branch: "main"
 inputs:
   - id: "node-latitude"
