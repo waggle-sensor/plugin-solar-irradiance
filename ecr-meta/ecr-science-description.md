@@ -16,5 +16,8 @@ Model loading time: N/A
    '-node-latitude': Latitude of the node location (default = 36.691959)  
    '-node-longitude': Longitude of the node location (default = -97.565965)  
 
+# Ontology:
+The code publishes measurements with toptic ‘env.solar.irradiance’
+
 # Reference
 [1] Seongha Park, Yongho Kim, Nicola J. Ferrier, Scott M. Collis, Rajesh Sankaran and Pete H. Beckman “Prediction of Solar Irradiance and Photovoltaic Solar Energy Product Based on Cloud Coverage Estimation Using Machine Learning Methods”, 2020, Atmosphere, Volume 12, Issue 3, pages 395.
