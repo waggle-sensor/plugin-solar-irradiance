@@ -16,7 +16,7 @@ Model loading time: N/A
    '-node-latitude': Latitude of the node location (default = 36.691959)  
    '-node-longitude': Longitude of the node location (default = -97.565965)  
 
-#Ontology:
+# Ontology:
 The code publishes measurements with toptic ‘env.solar.irradiance’
 
 ### Reference
