@@ -19,5 +19,23 @@ Model loading time: N/A
 # Ontology:
 The code publishes measurements with toptic ‘env.solar.irradiance’
 
+# Inference from Sage codes
+To query the output from the plugin, you can do with python library 'sage_data_client':
+```
+import sage_data_client
+
+# query and load data into pandas data frame
+df = sage_data_client.query(
+    start="-1h",
+    filter={
+        "name": "env.solar.irradiance",
+    }
+)
+
+# print results in data frame
+print(df)
+```
+For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
+
 ### Reference
 [1] Seongha Park, Yongho Kim, Nicola J. Ferrier, Scott M. Collis, Rajesh Sankaran and Pete H. Beckman “Prediction of Solar Irradiance and Photovoltaic Solar Energy Product Based on Cloud Coverage Estimation Using Machine Learning Methods”, 2020, Atmosphere, Volume 12, Issue 3, pages 395.
