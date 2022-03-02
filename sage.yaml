@@ -1,6 +1,6 @@
 name: "solarirradiance"
 description: "Solar Irradiance Estimator Using U-Net"
-version : "0.0.0"
+version : "0.0.1"
 authors: "Seongha Park <seongha.park@anl.gov>"
 license: "MIT license"
 keywords: "solar irradiance, cloud cover based, pvlib"
