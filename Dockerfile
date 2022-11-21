@@ -1,4 +1,4 @@
-FROM waggle/plugin-base:1.1.1-ml-cuda10.2-l4t
+FROM waggle/plugin-base:1.1.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
