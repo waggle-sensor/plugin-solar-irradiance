@@ -1,4 +1,5 @@
 #tables
-#pvlib
-pysolar
-https://github.com/waggle-sensor/pywaggle/archive/0.43.2.zip
+pvlib
+numpy==1.23.*
+pywaggle==0.55.*
+gpsdclient==1.1.0

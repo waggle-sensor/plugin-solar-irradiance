@@ -1,20 +1,34 @@
-import numpy as np
+import os
+import logging
 import argparse
 import datetime
-
 import time
+
+import numpy as np
 
 from pvlib import location
 from pvlib import irradiance
 import pandas as pd
+from gpsdclient import GPSDClient
 
-import waggle.plugin as plugin
+from waggle.plugin import Plugin
 
 TOPIC_CLOUDCOVER = "env.coverage.cloud"
 TOPIC_SOLARCLOUD = "env.irradiance.solar"
 
-plugin.init()
-plugin.subscribe(TOPIC_CLOUDCOVER)
+def get_gpolocation(host, port, retry=5):
+    gpsclient = GPSDClient(host=host, port=port)
+    for i in range(retry):
+        for result in gpsclient.dict_stream(convert_datetime=False):
+            # look for a GPS report
+            if result["class"] == "TPV":
+                lat = result.get("lat", None)
+                lon = result.get("lon", None)
+                if all([lat, lon]):
+                    return (lat, lon)
+                logging.error("Failed to find lat, lon")
+        logging.debug(f'Failed to find GPS report from {host}. Retry in 1 second.')
+        time.sleep(1)
 
 class cal_max_irr:
     def __init__(self, geo_location):
@@ -23,9 +37,6 @@ class cal_max_irr:
         self.geo_location = geo_location
 
     def cal(self, timestamp):
-        if datetime.datetime.fromtimestamp(timestamp).date() != self.lastupdate:
-            self.solarpy(datetime.datetime.fromtimestamp(timestamp).date())
-
         timestamp_low = datetime.datetime.fromtimestamp(timestamp).time()
         timestamp_high = (datetime.datetime.fromtimestamp(timestamp)+datetime.timedelta(seconds=60)).time()
 
@@ -34,7 +45,10 @@ class cal_max_irr:
             if dt > timestamp_low and dt < timestamp_high:
                 return v
 
-    def solarpy(self, date):
+    def is_updated(self, date):
+        return self.lastupdate == date
+
+    def update_solarpy(self, date):
         self.lastupdate = date
         tz = 'UTC'
         lat, lon = self.geo_location
@@ -52,23 +66,44 @@ class cal_max_irr:
 
 
 def run(args):
-    print('Generating solar irradiance table...')
-    # The default location (36.691959, -97.565965) is Lamont, Oklahoma
-    maxirr = cal_max_irr(geo_location=(args.node_latitude, args.node_longitude))
-    maxirr.solarpy(datetime.datetime.fromtimestamp(time.time()).date())
+    logging.info('Generating solar irradiance table...')
+    geolocation = (0,0)
+    if all([args.node_latitude is None, args.node_longitude is None]):
+        logging.info("No GPS coordinates is given.")
+        host = os.getenv("WAGGLE_GPS_SERVER", "")
+        port = os.getenv("WAGGLE_GPS_SERVER_PORT", 2947)
+        if host == "":
+            logging.error("WAGGLE_GPS_SERVER is not set. Failed to get GPS coordinates.")
+            return 2
+        logging.info(f'Attempting to get the coordinates from {host}:{port}.')
+        geolocation = get_gpolocation(host, port)
+    elif any([args.node_latitude is None, args.node_longitude is None]):
+        logging.error(f'node latitude ({args.node_latitude}) and longitude ({args.node_longitude}) information is incomplete')
+        return 2
+    else:
+        logging.info(f'GPS location is given as ({args.node_latitude}, {args.node_longitude})')
+        geolocation = (args.node_latitude, args.node_longitude)
 
-    print('Solar Irradiance estimator starts...')
-    while True:
-        print('Getting cloud coverage ratio...')
-        ratio = plugin.get()
-        rvalue = ratio.value
-        timestamp = ratio.timestamp
-        current_max_irr = maxirr.cal(timestamp)
 
-        irr = (1-rvalue) * current_max_irr
-        plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=timestamp)
-        print(f"Measures published: Solar irradiance = {irr}")
-
+    maxirr = cal_max_irr(geo_location=geolocation)
+    logging.info("Solar Irradiance estimator starts.")
+    with Plugin() as plugin:
+        logging.info(f'Subscribing {TOPIC_CLOUDCOVER}')
+        plugin.subscribe(TOPIC_CLOUDCOVER)
+        while True:
+            ratio = plugin.get()
+            rvalue = ratio.value
+            logging.info(f'Received cloud cover: {rvalue}')
+            timestamp_ns = ratio.timestamp
+            date = datetime.datetime.fromtimestamp(timestamp_ns / 1e9).date()
+            if not maxirr.is_updated(date):
+                logging.info(f'SolarPy\'s is outdated. Updating it with {date}')
+                maxirr.update_solarpy(date)
+            current_max_irr = maxirr.cal(timestamp_ns / 1e9)
+            irr = (1-rvalue) * current_max_irr
+            plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=timestamp_ns)
+            logging.info(f'Measures published: Solar irradiance = {irr}')
+    return 0
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -77,11 +112,18 @@ if __name__ == '__main__':
         action='store_true', default=False,
         help='Debug flag')
     parser.add_argument(
-        '-node-latitude', dest='node_latitude', action='store',
-        type=float, default=36.691959,
+        '-node-latitude', dest='node_latitude',
+        action='store', type=float,
         help='latitude of the node location')
     parser.add_argument(
-        '-node-longitude', dest='node_longitude', action='store',
-        type=float, default=-97.565965,
+        '-node-longitude', dest='node_longitude',
+        action='store', type=float,
         help='longitude of the node location')
-    run(parser.parse_args())
+    args = parser.parse_args()
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.debug else logging.INFO,
+        format='%(asctime)s %(message)s',
+        datefmt='%Y/%m/%d %H:%M:%S')
+    
+    exit(run(args))
