@@ -19,15 +19,14 @@ TOPIC_SOLARCLOUD = "env.irradiance.solar"
 def get_gpolocation(host, port, retry=5):
     gpsclient = GPSDClient(host=host, port=port)
     for i in range(retry):
-        result = gpsclient.dict_stream(convert_datetime=False)
-        # look for a GPS report
-        if not tpv_report and result["class"] == "TPV":
-            tpv_report = True
-            lat = result.get("lat", None)
-            lon = result.get("lon", None)
-            if all(lat, lon):
-                return (lat, lon)
-            logging.error("Failed to find lat, lon")
+        for result in gpsclient.dict_stream(convert_datetime=False):
+            # look for a GPS report
+            if result["class"] == "TPV":
+                lat = result.get("lat", None)
+                lon = result.get("lon", None)
+                if all([lat, lon]):
+                    return (lat, lon)
+                logging.error("Failed to find lat, lon")
         logging.debug(f'Failed to find GPS report from {host}. Retry in 1 second.')
         time.sleep(1)
 
@@ -38,9 +37,6 @@ class cal_max_irr:
         self.geo_location = geo_location
 
     def cal(self, timestamp):
-        if datetime.datetime.fromtimestamp(timestamp).date() != self.lastupdate:
-            self.solarpy(datetime.datetime.fromtimestamp(timestamp).date())
-
         timestamp_low = datetime.datetime.fromtimestamp(timestamp).time()
         timestamp_high = (datetime.datetime.fromtimestamp(timestamp)+datetime.timedelta(seconds=60)).time()
 
@@ -90,8 +86,6 @@ def run(args):
 
 
     maxirr = cal_max_irr(geo_location=geolocation)
-    maxirr.solarpy(datetime.datetime.fromtimestamp(time.time()).date())
-
     logging.info("Solar Irradiance estimator starts.")
     with Plugin() as plugin:
         logging.info(f'Subscribing {TOPIC_CLOUDCOVER}')
@@ -100,14 +94,14 @@ def run(args):
             ratio = plugin.get()
             rvalue = ratio.value
             logging.info(f'Received cloud cover: {rvalue}')
-            timestamp = ratio.timestamp
-            date = datetime.datetime.fromtimestamp(timestamp / 1e9).date()
+            timestamp_ns = ratio.timestamp
+            date = datetime.datetime.fromtimestamp(timestamp_ns / 1e9).date()
             if not maxirr.is_updated(date):
                 logging.info(f'SolarPy\'s is outdated. Updating it with {date}')
-                maxirr.solarpy(date)
-            current_max_irr = maxirr.cal(timestamp)
+                maxirr.update_solarpy(date)
+            current_max_irr = maxirr.cal(timestamp_ns / 1e9)
             irr = (1-rvalue) * current_max_irr
-            plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=timestamp)
+            plugin.publish(TOPIC_SOLARCLOUD, irr, timestamp=timestamp_ns)
             logging.info(f'Measures published: Solar irradiance = {irr}')
     return 0
 
