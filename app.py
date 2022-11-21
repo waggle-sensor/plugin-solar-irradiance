@@ -72,7 +72,7 @@ class cal_max_irr:
 def run(args):
     logging.info('Generating solar irradiance table...')
     geolocation = (0,0)
-    if all(args.node_latitude is None, args.node_longitude is None):
+    if all([args.node_latitude is None, args.node_longitude is None]):
         logging.info("No GPS coordinates is given.")
         host = os.getenv("WAGGLE_GPS_SERVER", "")
         port = os.getenv("WAGGLE_GPS_SERVER_PORT", 2947)
@@ -81,7 +81,7 @@ def run(args):
             return 2
         logging.info(f'Attempting to get the coordinates from {host}:{port}.')
         geolocation = get_gpolocation(host, port)
-    elif any(args.node_latitude is None, args.node_longitude is None):
+    elif any([args.node_latitude is None, args.node_longitude is None]):
         logging.error(f'node latitude ({args.node_latitude}) and longitude ({args.node_longitude}) information is incomplete')
         return 2
     else:

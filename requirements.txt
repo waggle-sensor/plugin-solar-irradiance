@@ -1,5 +1,5 @@
 #tables
-#pvlib
-pysolar
+pvlib
+numpy==1.23.*
 pywaggle==0.55.*
 gpsdclient==1.1.0

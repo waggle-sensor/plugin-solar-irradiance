@@ -1,4 +1,4 @@
-FROM waggle/plugin-base:1.1.1
+FROM waggle/plugin-base:1.1.1-base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
-#RUN pip3 install --no-cache-dir --upgrade pip \
+RUN pip3 install --no-cache-dir --upgrade pip \
 #  && pip3 install --no-cache-dir -r /app/requirements.txt
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
